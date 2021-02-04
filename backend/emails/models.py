@@ -33,3 +33,26 @@ class EmailMessage (models.Model):
     @property
     def to_email(self):
         return CustomUser.objects.get(id=self.to.id).email
+
+
+class ReplyToEmail (models.Model):
+    by = models.ForeignKey(
+        CustomUser, on_delete=models.CASCADE)
+    to = models.ForeignKey(EmailMessage, on_delete=models.CASCADE)
+    title = models.CharField(max_length=150)
+    content = models.TextField(max_length=5000)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    @property
+    def created_at_full(self):
+        return self.created_at.strftime('%B %-d, %Y at %I:%M %p')
+
+    @property
+    def replier_name(self):
+        replier = CustomUser.objects.get(id=self.by.id)
+        return replier.first_name + ' ' + replier.last_name
+
+    @property
+    def replier_email(self):
+        replier = CustomUser.objects.get(id=self.by.id)
+        return replier.email
